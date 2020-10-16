@@ -1,0 +1,28 @@
+/// COUNTERS ///
+
+POST /api/counters
+    - body: requestType (1+), counterId
+
+PUT /api/counters/:counterId
+    - body: requestType (1+) 
+
+GET /api/counters/:counterId/nextId
+    - request body: counterId
+    - response body: ticketId
+
+GET /api/counters/:counterId/currentId
+    - request body: counterId
+    - response body: ticketId
+
+GET /api/counters/:counterId/averageTime
+    - request body: counterId
+    - response body: averageTime
+
+/// TICKETS ///
+
+GET /api/tickets/:ticketId/serviceTime
+    - request body: ticketId
+    - response body: serviceTime
+
+GET /api/tickets/newTicket
+    - response body: ticketId
