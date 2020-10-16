@@ -72,7 +72,12 @@ GET /api/counters/:counterId/currentId
     - response body: ticketId
 */
 
-
+/*
+??
+GET /api/counters/currentId
+    - request body: counterId
+    - response body: example {"counterId": 1, "ticketId": 234}
+*/
 
 /*
 GET /api/counters/:counterId/averageTime
