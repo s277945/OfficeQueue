@@ -1,15 +1,22 @@
 'use strict';
 
-const sqlite = require('sqlite3').verbose();
+const mysql = require('mysql').verbose();
 
-const DBSOURCE = './db/noleggio.db';
+const DBSOURCE = './db/noleggio.db'; //to be changed
 
-const db = new sqlite.Database(DBSOURCE, (err) => {
-    if (err) {
-        // Cannot open database
-        console.error(err.message);
-        throw err;
-    }
-});
+let con = mysql.createConnection({
+    host: "localhost",
+    user: "yourusername",
+    password: "yourpassword"
+  });
+  
+  con.connect(function(err) {
+    if (err) throw err;
+    console.log("Connected!");
+    con.query(sql, function (err, result) {
+      if (err) throw err;
+      console.log("Result: " + result);
+    });
+  });
 
-module.exports = db;
+module.exports = con;
