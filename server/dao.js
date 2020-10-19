@@ -1,121 +1,205 @@
 'use strict';
-
-const Vehicle = require('./vehicle');
-const Rent = require('./rent');
 const db = require('./db');
-const moment = require('moment');
-const DisplayRent = require('./DisplayRent');
-
-
-
 
 /**
- * GET ALL VEHICLES from DB
- */
-
-exports.getVehicles = function(){
-    return new Promise((resolve, reject) => {
-        const sql = "select * from vehicles";
-        db.all(sql, (err, rows) => {
-            if (err) reject(err);
-            else {
-                
-                let vehicles = rows.map((row)=> new Vehicle(row.id, row.model, row.brand, row.category));
-                resolve(vehicles);
-            }
-        })
-    })
-}
-
-/**
- * GET: for each authenticated user, retrieve her rents
- */
-exports.getRents = function(user){
-    return new Promise((resolve, reject) => {
-        const sql = `select R.id, R.start_date, R.end_date, R.import, v.category
-        from rents as R, vehicles as v
-        where R.id_vehicle = v.id and R.id_user = ?;`;
-        db.all(sql, [user], (err, rows) => {
-            if (err)
-                reject(err);
-            else {
-                let rents = rows.map((row) => new DisplayRent(row.id, row.start_date, row.end_date, row.category, row.import));
-                resolve(rents);
-            }
-        })
-    })
-}
-
-
-exports.getAvailableVehicles = function(category, start_date, end_date){
-    return new Promise((resolve, reject) => {
-        const sql = `select id
-        from vehicles 
-        where category = ? and id not in (select id_vehicle
-                                from rents	
-                                where (start_date<=date(?) and end_date>=date(?)) or
-                                        (start_date<=date(?) and end_date>=date(?)) or
-                                        (start_date>=date(?) and end_date<=date(?)) )`;
-        
-        db.all(sql, [category, start_date, start_date, end_date, end_date, start_date, end_date], (err, rows) => {
-            if(err)
-                reject(err);
-            else {
-                let vehicles = rows;
-                resolve(vehicles);
-            }
-            })
-    })
-}
-
-/**
- * 
- * INSERT NEW RENT INTO THE DB
- */
-exports.addRent = function(rent){
-    rent.start_date = moment(rent.start_date).format("YYYY-MM-DD");
-    rent.end_date = moment(rent.end_date).format("YYYY-MM-DD");
-
+ * Insert
+ * Input RequestType
+ * Return QueueNumber
+ *
+* */
+exports.addTicket = function(requestType){
+    let date=new Date();
     return new Promise ((resolve, reject) => {
-        const sql = `INSERT INTO rents(id_user, id_vehicle, start_date, end_date, age_driver, n_additional_drivers, km, extra_warranty, import)
-                    VALUES (?,?,?,?,?,?,?,?,?)`;
-        db.run(sql, [rent.id_user, rent.id_vehicle, rent.start_date, rent.end_date, rent.age, rent.additional_drivers, rent.km, rent.warranty, rent.import], function(err){
-            if(err){
-                reject(err);
-            }
-            else {
-                resolve(this.lastID);
-            }
-        });
+        searchMax(requestType)
+            .then((max) => {
+                const sql = `INSERT INTO Queue(QueueNumber, RequestType, Day, Month, Year)
+                        VALUES (?,?,?,?,?)`;
+                db.run(sql, [max+1, requestType, date.getDate(), date.getMonth()+1, date.getFullYear()], function(err){
+                    if(err){
+                        reject(err);
+                    }
+                    else {
+                        console.log('Row inserted');
+                        resolve(max+1);
+                    }
+                });
+            }).catch(
+            (err)=> {throw new SQLException();
+            });
     });
 }
 
+    function searchMax(requestType){
+        return new Promise ((resolve, reject) => {
+            const sql = 'SELECT MAX(QueueNumber) AS QueueNum FROM Queue WHERE RequestType=?';
+            db.get(sql, [requestType],(err, row) => {
+                if (err)
+                    reject(err);
+                else {
+                    if(row==undefined)
+                        resolve(0);
+                    else
+                        resolve(row);
+                }
+            })
+        });
+    }
 
-/**
- * DELETE A RENT FROM THE DB
- */
+    /***
+     * AutoRefresh MainBoard
+     * Output QueueNumber*/
+    exports.showServed=function () {
+        let map=new Map()
+        return new Promise ((resolve, reject) => {
+            const sql = 'SELECT  CounterID, TicketNumber FROM ServedTicket';
+            db.get(sql,(err, rows) => {
+                if (err)
+                    reject(err);
+                else {
+                    rows.forEach(row=>{
+                        map.set(row.counterID, row.TicketNumber);
+                    });
+                    resolve(map);
+                }
+            })
+        });
 
- exports.deleteRent = function(rent_id){
-     return new Promise((resolve, reject) => {
-        const sql = 'DELETE FROM rents WHERE id = ?';
-        db.run(sql, [rent_id], (err) => {
-            if(err)
-                reject(err);
-            else
-                resolve(null);
+    }
+    /**
+     * Insert request type to counter
+     * Input CounterID, RequestType
+     **/
+    exports.insertRequestType=function(counterID,requestType,avgTime){
+        return new Promise((resolve, reject) => {
+            const sql='INSERT INTO CounterRequest VALUES(?,?,?) ';
+            db.run(sql, [counterID,requestType,avgTime], function(err){
+                if(err){
+                    reject(err);
+                }
+                else {
+                    console.log('Row inserted');
+                    resolve(true);
+                }
+            });
         })
-     });
- }
+    }
+    /**
+     * Delete, same as above*/
+    exports.deleteRequestType=function(counterID,requestType){
+        return new Promise((resolve, reject) => {
+            const sql='DELETE FROM CounterRequest WHERE counterID=? AND requestType=? ';
+            db.run(sql, [counterID,requestType], function(err){
+                if(err){
+                    reject(err);
+                }
+                else {
+                    console.log('Row deleted');
+                    resolve(true);
+                }
+            });
+        })
+    }
+exports.searchByCounterID=function(counterID){
+        let max=0;
+        let reqType;
+        let i=0;
+        return new Promise((resolve, reject) => {
+           const sql='SELECT requestType FROM CounterRequest WHERE counterID=?';
+           db.all(sql,[counterID],(err,rows)=>{
+               if(err)
+                   reject(err);
+               else{
+                            rows.forEach(row=>{
+                               countQueue(row).then((lenght)=>{
+                                if(lenght>=max){
+
+                                    /*if(lenght==max){
+                                        i++;
+                                        reqType+=' '+row.toString();
+
+                                    }*/
+                                    /*else {*/
+                                       // i=0;
+                                        reqType = row.toString();
+                                    //}
+                                    max = lenght;
+
+                                }
+
+                               })
+                                   .catch(
+                                       (err)=> {throw new SQLException();
+                                       });
+                           }
+
+                       );
+                            //if(i>0){
+                                //select min avgTime from the elements of reqTime vector
+                            //}
+                       selectMinTicket(reqType).then(minTicket=>{
+                           deleteQueueTicket(reqType,minTicket).then(returnValue=>{
+                               if(returnValue)
+                               {
+                                   updateServed(counterID,reqType,minTicket).then(returnVal=>{
+                                       if(returnVal)
+                                           console.log('update done');
+                                   })
+                               }
+                           }).catch((err)=>{throw new SQLException();})
+                       }).catch((err)=>{
+                           throw  new SQLException();
+                       })
 
 
-/**
- * FAKE PAYMENT
- */
-exports.payRent = function(){
-    return new Promise((resolve, reject) => {
-        resolve(true);
-    })
+               }
+           } );
+        });
 }
+function countQueue(requestType){
+        return new Promise((resolve, reject) => {
+            const sql='SELECT COUNT(*) FROM Queue WHERE requestType=?';
+            db.get(sql, [requestType], (err, row)=>{
+                if(err)
+                    reject(err);
+                else
+                    resolve(row);
+            })
+        })
+}
+function selectMinTicket(requestType){
+        return new Promise((resolve, reject) => {
+            const sql='SELECT MIN(QueueNumber) AS minTicket FROM Queue WHERE RequestType=? ';
+            db.get(sql,[requestType], (err,row)=>{
+                if(err)
+                    reject(err);
+                else{
+                    resolve(row.minTicket)
+                }
+            })
+        })
+}
+function deleteQueueTicket(requestType,minTicket){
+        return new Promise((resolve, reject) => {
+            const sql='DELETE FROM Queue WHERE RequestType=? AND QueueNumber=?';
+            db.run(sql,[requestType,minTicket],function(err){
+                if(err)
+                    reject(err);
+                else
+                    resolve(true);
+            })
+        })
 
-
-
+}
+//insertServed and delete Served
+function updateServed(counterID,requestType,ticketNumber){
+        return new Promise((resolve, reject) => {
+            const sql='UPDATE ServedTicket SET RequestType=?,TicketNumber=? WHERE CounterID=?';
+            db.run(sql,[requestType,ticketNumber,counterID],function(err){
+                if(err)
+                    reject(err);
+                else{
+                    resolve(true);
+                }
+            })
+        })
+}
