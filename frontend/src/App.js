@@ -1,26 +1,27 @@
-import React from 'react';
+import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+import { Switch, Route } from 'react-router-dom'
+
+import { General } from './pages/General'
+import { Manager } from './pages/Manager'
+import { Officer } from './pages/Officer'
+import { Ticket } from './pages/Ticket'
+
+class App extends Component {
+
+  render(){
+  return <div className='App'>
+      <Switch>
+        <Route path='/general' component={General}></Route>
+        <Route path='/manager' component={Manager}></Route>
+        <Route path='/officer' component={Officer}></Route>
+        <Route path='/ticket' component={Ticket}></Route>
+        <Route component={General}></Route>
+      </Switch>
     </div>
-  );
+  }
 }
 
 export default App;
