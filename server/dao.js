@@ -9,6 +9,7 @@ const db = require('./db');
 * */
 exports.addTicket = function(requestType){
     let date=new Date();
+
     return new Promise ((resolve, reject) => {
         searchMax(requestType)
             .then((max) => {
