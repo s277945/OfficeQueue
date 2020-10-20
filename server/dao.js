@@ -53,14 +53,13 @@ exports.addTicket = function(requestType){
         let map=new Map()
         return new Promise ((resolve, reject) => {
             const sql = 'SELECT  CounterID, TicketNumber FROM ServedTicket';
-            db.get(sql,(err, rows) => {
+            db.all(sql,(err, rows) => {
                 if (err)
                     reject(err);
                 else {
-                    rows.forEach(row=>{
-                        map.set(row.counterID, row.TicketNumber);
-                    });
-                    resolve(map);
+                    //console.log(rows);
+                    let list = rows.map(row => [{"counterId": row.CounterID, "ticketId": row.TicketNumber}]);
+                    resolve(list);
                 }
             })
         });
@@ -91,6 +90,7 @@ exports.addTicket = function(requestType){
             const sql='DELETE FROM CounterRequest WHERE counterID=? AND requestType=? ';
             db.run(sql, [counterID,requestType], function(err){
                 if(err){
+                    console.log('error on delete');
                     reject(err);
                 }
                 else {
@@ -100,6 +100,8 @@ exports.addTicket = function(requestType){
             });
         })
     }
+
+
 exports.searchByCounterID=function(counterID){
         let max=0;
         let reqType;
@@ -156,9 +158,10 @@ exports.searchByCounterID=function(counterID){
            } );
         });
 }
+
 function countQueue(requestType){
         return new Promise((resolve, reject) => {
-            const sql='SELECT COUNT(*) FROM Queue WHERE requestType=?';
+            const sql='SELECT MIN(QueueNumber) FROM Queue WHERE requestType=?';
             db.get(sql, [requestType], (err, row)=>{
                 if(err)
                     reject(err);
@@ -167,6 +170,7 @@ function countQueue(requestType){
             })
         })
 }
+
 function selectMinTicket(requestType){
         return new Promise((resolve, reject) => {
             const sql='SELECT MIN(QueueNumber) AS minTicket FROM Queue WHERE RequestType=? ';
