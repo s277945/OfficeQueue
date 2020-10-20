@@ -76,6 +76,7 @@ POST /api/counters/:counterId
     - params: counterId
 */
 
+<<<<<<< HEAD
 app.post('/api/counters/:counterId', (req, res) => {
     const requestType = req.body.requestType;
     const counterId = req.params.counterId;
@@ -89,6 +90,17 @@ app.post('/api/counters/:counterId', (req, res) => {
             res.status(201).json({"msg": "row inserted: " + response})
         })
         .catch(err => res.status(500).json({ errors: [{ 'param': 'Server', 'msg': err }] }));
+=======
+/*
+GET /api/counters/:counterId/requestTypes
+    - response body: requestType (1+) 
+*/
+app.get('/api/counters/:counterId/requestTypes', (req, res) => {
+    //read requestTypes for selected counter id from database
+    dao.searchByCounterID(req.params.counterId)
+    .then((result) => {res.status(200).json(result)}) // all went smoothly
+    .catch((err) => {res.status(403)})// error response
+>>>>>>> 5e886953f34723c0b39cff4f2b621a0afe7cae17
 });
 
 /*
@@ -130,6 +142,7 @@ GET /api/counters/:counterId/nextId
 
 
 /*
+<<<<<<< HEAD
 GET /api/counters/currentId
     - request body: counterId
     - response body: example {"counterId": 1, "ticketId": 234}
@@ -145,7 +158,9 @@ app.get('/api/counters/currentId', (req, res) => {
 /*
 ??
 GET /api/counters/:counterId/currentId
-    - request body: counterId
+=======
+??
+GET /api/counters/:counterId/currentId
     - response body: ticketId
 */
 app.get('/api/counters/:counterId/currentId', (req, res) => {
@@ -155,7 +170,29 @@ app.get('/api/counters/:counterId/currentId', (req, res) => {
     .catch((err) => {res.status(403)})// error response
 })
 
+/*
+GET /api/counters/currentId
+>>>>>>> 5e886953f34723c0b39cff4f2b621a0afe7cae17
+    - request body: counterId
+    - response body: ticketId
+*/
+<<<<<<< HEAD
+app.get('/api/counters/:counterId/currentId', (req, res) => {
+    //read current id for selected counter id from database
+    dao.showServedById(req.params.counterId)//??
+    .then((result) => {res.status(200).json(result)}) // all went smoothly
+    .catch((err) => {res.status(403)})// error response
+})
 
+
+=======
+app.get('/api/counters/currentId', (req, res) => {
+    //read current id for selected counter id from database
+    dao.showServed()
+    .then((result) => {res.status(200).json(result)}) // all went smoothly
+    .catch((err) => {res.status(403)})// error response
+})
+>>>>>>> 5e886953f34723c0b39cff4f2b621a0afe7cae17
 
 /*
 GET /api/counters/:counterId/averageTime
