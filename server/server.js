@@ -92,17 +92,22 @@ GET /api/counters/:counterId/currentId
 */
 app.get('/api/counters/:counterId/currentId', (req, res) => {
     //read current id for selected counter id from database
-    dao.showServed(req.params.counterId)
+    dao.showServedById(req.params.counterId)
     .then((result) => {res.status(200).json(result)}) // all went smoothly
     .catch((err) => {res.status(403)})// error response
 })
 
 /*
-??
 GET /api/counters/currentId
     - request body: counterId
     - response body: example {"counterId": 1, "ticketId": 234}
 */
+app.get('/api/counters/currentId', (req, res) => {
+    //read current id for selected counter id from database
+    dao.showServed()
+    .then((result) => {res.status(200).json(result)}) // all went smoothly
+    .catch((err) => {res.status(403)})// error response
+})
 
 /*
 GET /api/counters/:counterId/averageTime
