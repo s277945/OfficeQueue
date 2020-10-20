@@ -88,9 +88,14 @@ GET /api/counters/:counterId/nextId
 
 /*
 GET /api/counters/:counterId/currentId
-    - request body: counterId
     - response body: ticketId
 */
+app.get('/api/counters/:counterId/currentId', (req, res) => {
+    //read current id for selected counter id from database
+    dao.showServed(req.params.counterId)
+    .then((result) => {res.status(200).json(result)}) // all went smoothly
+    .catch((err) => {res.status(403)})// error response
+})
 
 /*
 ??
