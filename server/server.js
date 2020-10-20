@@ -61,6 +61,16 @@ POST /api/counters
     - body: requestType (1+), counterId
 */
 
+/*
+GET /api/counters/:counterId/requestTypes
+    - response body: requestType (1+) 
+*/
+app.get('/api/counters/:counterId/requestTypes', (req, res) => {
+    //read requestTypes for selected counter id from database
+    dao.searchByCounterID(req.params.counterId)
+    .then((result) => {res.status(200).json(result)}) // all went smoothly
+    .catch((err) => {res.status(403)})// error response
+});
 
 /*
 PUT /api/counters/:counterId
