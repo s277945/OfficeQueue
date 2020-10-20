@@ -2,10 +2,31 @@
 const db = require('./db');
 
 /**
+ * Page: RequestTicketPage
+ * Logic: Get the requestTypes served by at least one counter
+ */
+exports.getCounterRequestType=function(){
+    let list=[];
+    return new Promise((resolve, reject) => {
+        const sql='SELECT DISTINCT RequestType FROM CounterRequest ';
+        db.all(sql,(err,rows)=>{
+            if(err)
+                reject(err);
+            else{
+                rows.forEach((row)=>{
+                    list.push(row)
+                });
+                resolve(list);
+            }
+        });
+    });
+
+}
+/**
  * Insert
  * Input RequestType
  * Return QueueNumber
- *
+ * Page: RequestTicketPage
 * */
 exports.addTicket = function(requestType){
     let date=new Date();
@@ -48,31 +69,67 @@ exports.addTicket = function(requestType){
 
     /***
      * AutoRefresh MainBoard
-     * Output QueueNumber*/
+     * Output QueueNumber
+     * Page: MainBoardPage
+     */
     exports.showServed=function () {
         let map=new Map()
         return new Promise ((resolve, reject) => {
-            const sql = 'SELECT  CounterID, TicketNumber FROM ServedTicket';
+            const sql = 'SELECT  CounterID, RequestType, TicketNumber FROM ServedTicket';
             db.all(sql,(err, rows) => {
                 if (err)
                     reject(err);
                 else {
-                    //console.log(rows);
-                    let list = rows.map(row => [{"counterId": row.CounterID, "ticketId": row.TicketNumber}]);
+                    let list = rows.map(row => [{"counterId": row.CounterID, "requestType": row.RequestType, "ticketId": row.TicketNumber}]);
                     resolve(list);
                 }
             })
         });
 
     }
+
+    /**
+     * Input CounterID
+     * Output RequestType
+     * Page: ManagerPage
+     * Logic: Get all the RequestTypes and list them
+     */
+    exports.getRequestType=function (counterID) { //DA VEDERE
+        let list=[];
+        let check= new Map();
+        return new Promise((resolve, reject) => {
+            const sql='SELECT DISTINCT RequestType FROM RequestType ';
+            db.all(sql,(err,rows)=>{
+                if(err)
+                    reject(err);
+                else{
+                    rows.forEach((row)=>{
+                        const sql='SELECT RequestType FROM CounterRequest WHERE CounterID=? AND RequestType=?';
+                        db.get(sql,[counterID, row.RequestType],(err,rows)=>{
+                            if(err)
+                                reject(err);
+                            else{
+                                if(rows.RequestType==undefined) 
+                                    check = rows.map(row => [{"requestType": row.RequestType, "status": false}]); 
+                                else
+                                    check = rows.map(row => [{"requestType": row.RequestType, "status": true}]); 
+                            }
+                        })
+                    });
+            
+                    resolve(check);
+            }
+        });
+    });
+    }
     /**
      * Insert request type to counter
      * Input CounterID, RequestType
      **/
-    exports.insertRequestType=function(counterID,requestType,avgTime){
+    exports.insertRequestType=function(counterID,requestType){
         return new Promise((resolve, reject) => {
-            const sql='INSERT INTO CounterRequest VALUES(?,?,?) ';
-            db.run(sql, [counterID,requestType,avgTime], function(err){
+            const sql='INSERT INTO CounterRequest VALUES(?,?) ';
+            db.run(sql, [counterID,requestType], function(err){
                 if(err){
                     reject(err);
                 }
@@ -85,7 +142,7 @@ exports.addTicket = function(requestType){
     }
     /**
      * Delete, same as above*/
-    exports.deleteRequestType=function(counterID,requestType){
+    exports.deleteRequestType=function(counterID,requestType){ //DA VEDERE
         return new Promise((resolve, reject) => {
             const sql='DELETE FROM CounterRequest WHERE counterID=? AND requestType=? ';
             db.run(sql, [counterID,requestType], function(err){
@@ -101,6 +158,20 @@ exports.addTicket = function(requestType){
         })
     }
 
+    exports.insertNewRequestType=function(requestType,avgTime){
+        return new Promise((resolve, reject) => {
+            const sql='INSERT INTO RequestType VALUES(?,?) ';
+            db.run(sql, [requestType,avgTime], function(err){
+                if(err){
+                    reject(err);
+                }
+                else {
+                    console.log('ReqType created');
+                    resolve(true);
+                }
+            });
+        })
+    }
 
 exports.searchByCounterID=function(counterID){
         let max=0;
