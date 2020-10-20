@@ -39,6 +39,16 @@ GET /api/tickets/newTicket
     - response body: ticketId
 */
 
+app.post('/api/tickets/newTicket', (req, res) => {
+    const requestType = req.body.requestType;
+
+    if(!requestType) return res.status(400).json({errors: 'Invalid requestType'});
+
+    dao.addTicket(requestType)
+        .then((ticketId) => res.status(201).json({"ticketId": ticketId}))
+        .catch(err => res.status(500).json({ errors: [{ 'param': 'Server', 'msg': err }] }));
+});
+
 
 
 

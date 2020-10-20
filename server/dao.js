@@ -37,10 +37,10 @@ exports.addTicket = function(requestType){
                 if (err)
                     reject(err);
                 else {
-                    if(row==undefined)
+                    if(row==undefined || row.QueueNum == null)
                         resolve(0);
                     else
-                        resolve(row);
+                        resolve(row.QueueNum);
                 }
             })
         });
