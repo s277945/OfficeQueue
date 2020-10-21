@@ -60,19 +60,51 @@ app.post('/api/tickets', (req, res) => {
 
 /// COUNTERS ENDPOINTS ///
 
+
+/**
+ * GET /api/requestTypes
+ * 
+ * retrieves list of all available requestType
+ */
+
+app.get('/api/requestTypes', (req, res)=>{
+    dao.getAllRequestTypes()
+        .then((list) => res.status(201).json(list))
+        .catch(err => res.status(500).json({ errors: [{ 'param': 'Server', 'msg': err }] }));
+});
+
+
+
+
 /**
  * GET /api/counters/requestTypes
  * 
- * retrieves list of available requestType
+ * retrieves list of available requestType served by counters
  */
 
-app.get('/api/counters/requestTypes', (req, res)=>{});
+app.get('/api/counters/requestTypes', (req, res)=>{
+    dao.getCounterRequestType()
+        .then((list) => res.status(201).json(list))
+        .catch(err => res.status(500).json({ errors: [{ 'param': 'Server', 'msg': err }] }));
+});
+
+/**
+ * GET /api/counters/:counterId/requestTypes
+ * 
+ * retrieves list of served requestType by a counter
+ */
+
+app.get('/api/counters/:counterId/requestTypes', (req, res)=>{
+    dao.getRequestType(req.params.counterId)
+        .then((list) => res.status(201).json(list))
+        .catch(err => res.status(500).json({ errors: [{ 'param': 'Server', 'msg': err }] }));
+});
 
 /*
 endpoint for add requestType for a given counter (param counterId) MANAGER
 
 POST /api/counters/:counterId
-    - body: { "requestType": "payment", "avgTime": 32}
+    - body: { "requestType": "payment"}
     - params: counterId
 */
 
@@ -80,11 +112,10 @@ app.post('/api/counters/:counterId', (req, res) => {
     const requestType = req.body.requestType;
     const counterId = req.params.counterId;
     //console.log(counterId);
-    const avgTime = req.body.avgTime;
 
     if(!requestType) return res.status(400).json({errors: 'Invalid requestType'});
 
-    dao.insertRequestType(counterId, requestType, avgTime)
+    dao.insertRequestType(counterId, requestType)
         .then((response) => {
             res.status(201).json({"msg": "row inserted: " + response})
         })
@@ -112,10 +143,10 @@ app.delete('/api/counters/:counterId', (req, res) => {
 });
 
 /*
-GET /api/counters/:counterId/requestTypes MAIN PAGE
+GET /api/counters/:counterId/next MAIN PAGE ///DOESNT WORK
     - response body: requestType (1+) 
 */
-app.get('/api/counters/:counterId/requestTypes', (req, res) => {
+app.get('/api/counters/:counterId/next', (req, res) => {
     //read requestTypes for selected counter id from database
     dao.searchByCounterID(req.params.counterId)
     .then((result) => {res.status(200).json(result)}) // all went smoothly
@@ -128,11 +159,6 @@ GET /api/counters/:counterId/nextId
     - response body: ticketId
 */
 
-app.get('/api/counters/:counterId/nextId', (req, res) => {     //read current id for selected counter id from database     
-    dao.searchByCounterID(req.params.counterId)     
-    .then((result) => {res.status(200).json(result)}) // all went smoothly     
-    .catch((err) => {res.status(403).json({ errors: [{ 'param': 'Server', 'msg': err }] })})// error response
-});
 
 /*
 GET /api/counters/currentId
@@ -166,7 +192,6 @@ app.get('/api/counters/:counterId/currentId', (req, res) => {
 GET /api/counters/:counterId/averageTime
     - request body: counterId
     - response body: averageTime
-*/
 
 app.get('/api/counters/:counterId/averageTime', (req, res) => {
     //read current id for selected counter id from database
@@ -174,7 +199,27 @@ app.get('/api/counters/:counterId/averageTime', (req, res) => {
     .then((result) => {res.status(200).json(result)}) // all went smoothly
     .catch((err) => {res.status(403)})// error response
 })
+*/
 
+/**
+ * POST /api/requestTypes
+ * - request body: {"requestType" : "xd", "avgTime": 23434}
+ * 
+ */
+
+app.post('/api/requestTypes', (req, res) => {
+    const requestType = req.body.requestType;
+    const avgTime = req.body.avgTime;
+    
+
+    if(!requestType) return res.status(400).json({errors: 'Invalid requestType'});
+
+    dao.insertNewRequestType(requestType, avgTime)
+        .then((response) => {
+            res.status(201).json({"msg": "row inserted: " + response})
+        })
+        .catch(err => res.status(500).json({ errors: [{ 'param': 'Server', 'msg': err }] }));
+});
 
 //activate server
 app.listen(port, () => console.log(`Server ready at port: ${port}`));

@@ -88,36 +88,44 @@ exports.addTicket = function(requestType){
 
     }
 
+/**
+     * 
+     * Output RequestTypes
+     * Page: ManagerPage
+     * Logic: Get all the available RequestTypes and list them
+     */
+    exports.getAllRequestTypes=function () { //DA VEDERE
+        let list=[];
+        let check= new Map();
+        return new Promise((resolve, reject) => {
+            const sql='SELECT RequestType FROM RequestType ';
+            db.all(sql, (err,rows)=>{
+                if(err)
+                    reject(err);
+                else{
+                    resolve(rows);
+            }
+        });
+    });
+    }
+
+
     /**
      * Input CounterID
      * Output RequestType
      * Page: ManagerPage
-     * Logic: Get all the RequestTypes and list them
+     * Logic: Get all the RequestTypes served by the counters 
      */
     exports.getRequestType=function (counterID) { //DA VEDERE
         let list=[];
         let check= new Map();
         return new Promise((resolve, reject) => {
-            const sql='SELECT DISTINCT RequestType FROM RequestType ';
-            db.all(sql,(err,rows)=>{
+            const sql='SELECT RequestType FROM CounterRequest WHERE CounterID = ? ';
+            db.all(sql, [counterID], (err,rows)=>{
                 if(err)
                     reject(err);
                 else{
-                    rows.forEach((row)=>{
-                        const sql='SELECT RequestType FROM CounterRequest WHERE CounterID=? AND RequestType=?';
-                        db.get(sql,[counterID, row.RequestType],(err,rows)=>{
-                            if(err)
-                                reject(err);
-                            else{
-                                if(rows.RequestType==undefined)
-                                    check = rows.map(row => [{"requestType": row.RequestType, "status": false}]);
-                                else
-                                    check = rows.map(row => [{"requestType": row.RequestType, "status": true}]);
-                            }
-                        })
-                    });
-
-                    resolve(check);
+                    resolve(rows);
             }
         });
     });
@@ -173,94 +181,117 @@ exports.addTicket = function(requestType){
         })
     }
 
-exports.searchByCounterID=function(counterID){
+    exports.searchByCounterID=function(counterID){
         let max=0;
         let reqType;
         let i=0;
         return new Promise((resolve, reject) => {
            const sql='SELECT requestType FROM CounterRequest WHERE counterID=?';
-           db.all(sql,[counterID],(err,rows)=>{
+           db.all(sql,[counterID], async (err,rows)=>{
                if(err)
                    reject(err);
                else{
-                            rows.forEach(row=>{
-                               countQueue(row).then((lenght)=>{
-                                if(lenght>=max){
-
-                                    if(lenght==max){
-                                        i++;
-                                        reqType+=' '+row.toString();
-
+                   console.log(rows);
+                            for(let row of rows){
+                                await countQueue(row.RequestType).then((lenght)=>{
+                                    
+                                    if(lenght>=max){
+    
+                                        
+                                        if(lenght==max){
+                                            i++;
+                                            reqType+=' '+ row.RequestType;
+                                            
+    
+                                        }
+                                        else
+                                         {
+                                           i=0;
+                                            reqType = row.RequestType;
+                                        
+                                        }
+                                        max = lenght;
+    
                                     }
-                                    else {
-                                       i=0;
-                                        reqType = row.toString();
-                                    }
-                                    max = lenght;
-
-                                }
-
-                               })
-                                   .catch(
-                                       (err)=> {throw new SQLException();
-                                       });
-                           }
-
-                       );
+    
+                                   })
+                                       .catch(
+                                           (err)=> {throw new SQLException();
+                                           });
+                            }
+                               
+                         
                             if(i>0){
                                 let split=[];
                                 //select min avgTime from the elements of reqTime vector
                                 split=reqType.split(' ');
+                               
                                 let minAvgTime=Number.MAX_VALUE;
-                                split.forEach(row=>{
-                                    getAverageTime(row).then(avgTime=> {
+                                for(let row of split){
+                                    
+                                    await getAverageTime(row).then(avgTime=> {
+                                      
                                         if(avgTime<minAvgTime) {
+                                            console.log("duiobastarsoda: " + minAvgTime);
                                             minAvgTime = avgTime;
                                             reqType=row;
                                         }
+                                        
 
-                                    }).catch((err)=>throw new SQLException());
-                                });
+                                    }).catch((err)=>{throw new SQLException()});
+                                }
                             }
+                           
+                            console.log("requesttype before func " + reqType);
                        selectMinTicket(reqType).then(minTicket=>{
                            deleteQueueTicket(reqType,minTicket).then(returnValue=>{
                                if(returnValue)
                                {
                                    updateServed(counterID,reqType,minTicket).then(returnVal=>{
-                                       if(returnVal)
-                                           console.log('update done');
-                                   })
+                                       if(returnVal){
+                                        console.log('update done');
+                                        resolve([{"counterID": counterID, "requestType": reqType, "ticketNumber": minTicket}])
+                                       }
+                                           
+                                   }).catch(err => console.log(err))
                                }
                            }).catch((err)=>{throw new SQLException();})
                        }).catch((err)=>{
                            throw  new SQLException();
                        })
-
-
                }
            } );
+           
         });
 }
 
 function countQueue(requestType){
+    
         return new Promise((resolve, reject) => {
-            const sql='SELECT MIN(QueueNumber) FROM Queue WHERE requestType=?';
+            const sql='SELECT COUNT(*) FROM Queue WHERE requestType=?';
+        
             db.get(sql, [requestType], (err, row)=>{
                 if(err)
                     reject(err);
-                else
-                    resolve(row);
+                else {
+                    console.log(row['COUNT(*)']);
+                    resolve(row['COUNT(*)']);
+                }
+                    
             })
         })
-}
+
+    }
 
 function selectMinTicket(requestType){
+    console.log("reqtype selectmin:" + requestType);
         return new Promise((resolve, reject) => {
             const sql='SELECT MIN(QueueNumber) AS minTicket FROM Queue WHERE RequestType=? ';
             db.get(sql,[requestType], (err,row)=>{
                 if(err)
                     reject(err);
                 else{
+                    console.log("minticket: " + row.minTicket);
                     resolve(row.minTicket)
                 }
             })
@@ -278,28 +309,55 @@ function deleteQueueTicket(requestType,minTicket){
         })
 
 }
+
+function checkServed(counterID){
+    return new Promise((resolve, reject) => {
+        const sql = 'SELECT COUNT(*) FROM ServedTicket WHERE CounterID = ?';
+        db.get(sql, [counterID], (err, row) =>{
+            if(err) reject(err);
+            else resolve(row['COUNT(*)']);
+        })
+    })
+}
+
 //insertServed and delete Served
 function updateServed(counterID,requestType,ticketNumber){
         return new Promise((resolve, reject) => {
-            const sql='UPDATE ServedTicket SET RequestType=?,TicketNumber=? WHERE CounterID=?';
-            db.run(sql,[requestType,ticketNumber,counterID],function(err){
-                if(err)
-                    reject(err);
-                else{
-                    resolve(true);
+
+            checkServed(counterID)
+            .then((count) => {
+                if(count == 1){
+                    const sql='UPDATE ServedTicket SET RequestType=?,TicketNumber=? WHERE CounterID=?';
+                    db.run(sql,[requestType,ticketNumber,counterID],function(err){
+                    if(err)
+                        reject(err);
+                    else{
+                        resolve(true);
+                    }})
+                } else {
+                    const sql='INSERT INTO ServedTicket VALUES(?,?,?)';
+                    db.run(sql,[counterID,requestType,ticketNumber],function(err){
+                    if(err)
+                        reject(err);
+                    else{
+                        resolve(true);
+                    }})
                 }
             })
+            
         })
 }
+
+
 function getAverageTime(requestType){
-        return new Promise((resolve, reject) => {
-            const sql='SELECT AverageTime FROM RequestType WHERE RequestType=?';
-            db.get(sql,[requestType],(err,row)=>{
-                if (err)
-                    reject(err)
-                else{
-                    resolve(row.AverageTime);
-                }
-            })
+    return new Promise((resolve, reject) => {
+        const sql='SELECT AverageTime FROM RequestType WHERE RequestType=?';
+        db.get(sql,[requestType],(err,row)=>{
+            if (err)
+                reject(err)
+            else{
+                resolve(row.AverageTime);
+            }
         })
+    })
 }
