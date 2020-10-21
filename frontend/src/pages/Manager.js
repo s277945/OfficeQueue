@@ -10,13 +10,39 @@ export class Manager extends Component {
     state = { counters: [], requestTypes: [] }
 
     componentDidMount() {
-        // axios.get(`https://3001/api/counters/:counterId/currentId`)
-        // .then(res => {
-        //   console.log(res);
-        //   console.log(res.data);
-        // })
-        this.setState({ requestTypes: ['type1', 'type2', 'type3', 'type4'] })
-        this.setState({ counters: [{counterId: '1', reqTypes:['type1', 'type2', 'type3']},{counterId: '2', reqTypes:['type1', 'type2']},{counterId: '3', reqTypes:[]}]})
+        //Get request Types
+        var reqList = []
+        axios.get(`http://localhost:3001/api/counters/requestTypes`)
+            .then(res => {
+                res.data.map((obj) => reqList.push(obj.RequestType))
+                console.log(reqList)
+                this.setState({ requestTypes: reqList })
+            })
+        
+
+        //Get counters and requests
+        var countersNum = 3
+        let counters = []
+        let reqList2 = []
+
+        for (let i = 1; i <= countersNum; i++) {
+            
+
+            axios.get(`http://localhost:3001/api/counters/${i}/requestTypes`)
+                .then(res => {
+                    reqList2=[]
+                    res.data.map((obj) => reqList2.push(obj.RequestType))
+                    console.log(i)
+                    console.log(res.data)
+                    console.log(reqList2)
+                    counters.push({ counterId: i, reqTypes: reqList2 })
+                    console.log(counters)
+                    this.setState({ counters: counters })
+                })
+            
+
+        }
+        
     }
 
     render() {
@@ -28,13 +54,13 @@ export class Manager extends Component {
                 <h1>Counter Management</h1>
                 <Box className='vertical-center'>
                     <ButtonGroup orientation='vertical' size="large" variant="contained" color="primary" aria-label="large outlined primary button group">
-                        { counters !== undefined ? counters.map((counter) =>
+                        {counters !== undefined ? counters.map((counter) =>
                             <div>
                                 <ButtonCounter counter={counter} requestTypes={requestTypes}></ButtonCounter>
-                                <br/>
+                                <br />
                             </div>
                         )
-                        : <p> Add new counters</p>}
+                            : <p> Add new counters</p>}
                     </ButtonGroup>
                 </Box>
             </div>

@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import axios from 'axios';
 
 import { Button, Box, ButtonGroup } from '@material-ui/core';
 import Modal from '@material-ui/core/Modal';
@@ -17,13 +18,32 @@ export class ButtonCounter extends Component {
     };
 
     addToCounter = (counter, request) => {
-        //axios post counter,request
         console.log(counter, request)
+        axios.post(`http://localhost:3001/api/counters/${counter}`, {requestType : request})
+        .then(res => {
+          console.log(res)
+          window.location.reload(false);
+        })
+        
     }
 
     deleteFromCounter = (counter, request) => {
-        //axios post counter,request
+        // console.log(counter, request)
+        // axios.delete(`http://localhost:3001/api/counters/${counter}`, { data: {requestType : request}})
+        // .then(res => {
+        //   console.log(res)
+        //   window.location.reload(false);
+        // })
         console.log(counter, request)
+        fetch(`http://localhost:3001/api/counters/${counter}`, {
+            method: 'delete',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({requestType : request})
+          })
+          .then(res=>{
+            //this is not happening
+          })
+          window.location.reload(false);
     }
     newRequestType = (counter) => {
         console.log(counter)
@@ -48,7 +68,7 @@ export class ButtonCounter extends Component {
                                     requestTypes.map((request) =>
                                         <div>
                                             <div>{request}</div>
-                                            <Button variant="contained" color="primary" onClick={(e) => { e.preventDefault(); this.addToCounter(counter.counterId, request) }}>Add</Button>
+                                            <Button variant="contained" color="primary" onClick={(e) => { e.preventDefault(); this.addToCounter(counter.counterId, request)}}>Add</Button>
                                         </div>)
                                     : <p>No requests available</p>}
                             </div>
