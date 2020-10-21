@@ -5,8 +5,8 @@ const rootReducer = combineReducers({
     // todos: todosReduce,
 })
 
-const store = configureStore({
+export const store = configureStore({
     reducer: rootReducer,
 })
 
-export default store
+//export default store

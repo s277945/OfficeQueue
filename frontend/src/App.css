@@ -36,3 +36,24 @@
     transform: rotate(360deg);
   }
 }
+
+.vertical-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+}
+
+.modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  border: '2px solid #000';
+  padding: 20px;
+  background: white;
+}
+
+.column {
+  float: left;
+  width: 50%;
+}
+
