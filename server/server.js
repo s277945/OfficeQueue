@@ -168,6 +168,13 @@ GET /api/counters/:counterId/averageTime
     - response body: averageTime
 */
 
+app.get('/api/counters/:counterId/averageTime', (req, res) => {
+    //read current id for selected counter id from database
+    dao.getAverageTime(req.params.counterId)//??
+    .then((result) => {res.status(200).json(result)}) // all went smoothly
+    .catch((err) => {res.status(403)})// error response
+})
+
 
 //activate server
 app.listen(port, () => console.log(`Server ready at port: ${port}`));
