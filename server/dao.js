@@ -109,14 +109,14 @@ exports.addTicket = function(requestType){
                             if(err)
                                 reject(err);
                             else{
-                                if(rows.RequestType==undefined) 
-                                    check = rows.map(row => [{"requestType": row.RequestType, "status": false}]); 
+                                if(rows.RequestType==undefined)
+                                    check = rows.map(row => [{"requestType": row.RequestType, "status": false}]);
                                 else
-                                    check = rows.map(row => [{"requestType": row.RequestType, "status": true}]); 
+                                    check = rows.map(row => [{"requestType": row.RequestType, "status": true}]);
                             }
                         })
                     });
-            
+
                     resolve(check);
             }
         });
@@ -187,15 +187,15 @@ exports.searchByCounterID=function(counterID){
                                countQueue(row).then((lenght)=>{
                                 if(lenght>=max){
 
-                                    /*if(lenght==max){
+                                    if(lenght==max){
                                         i++;
                                         reqType+=' '+row.toString();
 
-                                    }*/
-                                    /*else {*/
-                                       // i=0;
+                                    }
+                                    else {
+                                       i=0;
                                         reqType = row.toString();
-                                    //}
+                                    }
                                     max = lenght;
 
                                 }
@@ -207,9 +207,21 @@ exports.searchByCounterID=function(counterID){
                            }
 
                        );
-                            //if(i>0){
+                            if(i>0){
+                                let split=[];
                                 //select min avgTime from the elements of reqTime vector
-                            //}
+                                split=reqType.split(' ');
+                                let minAvgTime=Number.MAX_VALUE;
+                                split.forEach(row=>{
+                                    getAverageTime(row).then(avgTime=> {
+                                        if(avgTime<minAvgTime) {
+                                            minAvgTime = avgTime;
+                                            reqType=row;
+                                        }
+
+                                    }).catch((err)=>throw new SQLException());
+                                });
+                            }
                        selectMinTicket(reqType).then(minTicket=>{
                            deleteQueueTicket(reqType,minTicket).then(returnValue=>{
                                if(returnValue)
@@ -275,6 +287,18 @@ function updateServed(counterID,requestType,ticketNumber){
                     reject(err);
                 else{
                     resolve(true);
+                }
+            })
+        })
+}
+function getAverageTime(requestType){
+        return new Promise((resolve, reject) => {
+            const sql='SELECT AverageTime FROM RequestType WHERE RequestType=?';
+            db.get(sql,[requestType],(err,row)=>{
+                if (err)
+                    reject(err)
+                else{
+                    resolve(row.AverageTime);
                 }
             })
         })
