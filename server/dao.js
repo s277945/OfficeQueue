@@ -181,89 +181,94 @@ exports.addTicket = function(requestType){
         })
     }
 
-    exports.searchByCounterID=function(counterID){
-        let max=0;
+    exports.searchByCounterID = function (counterID) {
+        let max = 0;
         let reqType;
-        let i=0;
+        let i = 0;
         return new Promise((resolve, reject) => {
-           const sql='SELECT requestType FROM CounterRequest WHERE counterID=?';
-           db.all(sql,[counterID], async (err,rows)=>{
-               if(err)
-                   reject(err);
-               else{
-                   console.log(rows);
-                            for(let row of rows){
-                                await countQueue(row.RequestType).then((lenght)=>{
-                                    
-                                    if(lenght>=max){
-    
-                                        
-                                        if(lenght==max){
-                                            i++;
-                                            reqType+=' '+ row.RequestType;
-                                            
-    
-                                        }
-                                        else
-                                         {
-                                           i=0;
-                                            reqType = row.RequestType;
-                                        
-                                        }
-                                        max = lenght;
-    
-                                    }
-    
-                                   })
-                                       .catch(
-                                           (err)=> {throw new SQLException();
-                                           });
-                            }
-                               
-                         
-                            if(i>0){
-                                let split=[];
-                                //select min avgTime from the elements of reqTime vector
-                                split=reqType.split(' ');
-                               
-                                let minAvgTime=Number.MAX_VALUE;
-                                for(let row of split){
-                                    
-                                    await getAverageTime(row).then(avgTime=> {
-                                      
-                                        if(avgTime<minAvgTime) {
-                                            console.log("duiobastarsoda: " + minAvgTime);
-                                            minAvgTime = avgTime;
-                                            reqType=row;
-                                        }
-                                        
+            const sql = 'SELECT requestType FROM CounterRequest WHERE counterID=?';
+            db.all(sql, [counterID], async (err, rows) => {
+                if (err)
+                    reject(err);
+                else {
+                    console.log(rows);
+                    for (let row of rows) {
+                        await countQueue(row.RequestType).then((lenght) => {
+                            if (lenght > 0) {
+                                if (lenght >= max) {
 
-                                    }).catch((err)=>{throw new SQLException()});
+
+                                    if (lenght == max) {
+                                        i++;
+                                        reqType += ' ' + row.RequestType;
+
+
+                                    }
+                                    else {
+                                        i = 0;
+                                        reqType = row.RequestType;
+
+                                    }
+                                    max = lenght;
+
                                 }
                             }
-                           
-                            console.log("requesttype before func " + reqType);
-                       selectMinTicket(reqType).then(minTicket=>{
-                           deleteQueueTicket(reqType,minTicket).then(returnValue=>{
-                               if(returnValue)
-                               {
-                                   updateServed(counterID,reqType,minTicket).then(returnVal=>{
-                                       if(returnVal){
-                                        console.log('update done');
-                                        resolve([{"counterID": counterID, "requestType": reqType, "ticketNumber": minTicket}])
-                                       }
-                                           
-                                   }).catch(err => console.log(err))
-                               }
-                           }).catch((err)=>{throw new SQLException();})
-                       }).catch((err)=>{
-                           throw  new SQLException();
-                       })
-               }
-           } );
-           
+                        }).catch(
+                            (err) => {
+                                throw new SQLException();
+                            });
+                    }
+                    if (max != 0) {
+                        if (i > 0) {
+                            let split = [];
+                            //select min avgTime from the elements of reqTime vector
+                            split = reqType.split(' ');
+
+                            let minAvgTime = Number.MAX_VALUE;
+                            for (let row of split) {
+
+                                await getAverageTime(row).then(avgTime => {
+
+                                    if (avgTime < minAvgTime) {
+                                        minAvgTime = avgTime;
+                                        reqType = row;
+                                    }
+                                }).catch((err) => { throw new SQLException() });
+                            }
+                        }
+
+                        selectMinTicket(reqType).then(minTicket => {
+                            deleteQueueTicket(reqType, minTicket).then(returnValue => {
+                                if (returnValue) {
+                                    updateServed(counterID, reqType, minTicket).then(returnVal => {
+                                        if (returnVal) {
+                                            resolve([{ "counterID": counterID, "requestType": reqType, "ticketNumber": minTicket }])
+                                        }
+
+                                    }).catch(err => console.log(err))
+                                }
+                            }).catch((err) => { throw new SQLException(); })
+                        }).catch((err) => {
+                            throw new SQLException();
+                        })
+                    } else {
+                        reqType = "Counter free";
+                        let minTicket = 0;
+                        const sql = 'UPDATE ServedTicket SET RequestType=?,TicketNumber=? WHERE CounterID=?';
+                        db.run(sql, [reqType, minTicket, counterID], function (err) {
+                            if (err)
+                                reject(err);
+                            else {
+                                resolve([{ "counterID": counterID, "requestType": reqType, "ticketNumber": minTicket }]);
+                            }
+                        })
+                    }
+                }
+            });
+
         });
-}
+    }
+
 
 function countQueue(requestType){
     
