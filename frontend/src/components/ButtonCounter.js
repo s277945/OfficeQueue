@@ -46,7 +46,7 @@ export class ButtonCounter extends Component {
             })
         window.location.reload(false);
     }
-    newRequestType = (counter) => {
+    newRequestType = (counter, funct) => {
         console.log(counter)
         console.log(this.state.newText,this.state.newTime)
         axios.post(`http://localhost:3001/api/requestTypes`, { requestType: this.state.newText, avgTime: this.state.newTime })
@@ -54,11 +54,14 @@ export class ButtonCounter extends Component {
                 console.log(res)
                 //window.location.reload(false);
             })
+            this.setState({ modal1: false });
+            this.setState({ modal2: false });
+            funct(this.state.newText);
     }
 
     render() {
 
-        const { counter, requestTypes } = this.props
+        const { updateReq, counter, requestTypes } = this.props
 
         return (
             <div>
@@ -111,7 +114,7 @@ export class ButtonCounter extends Component {
                         <input type="number" value={this.state.newTime} onChange={(e)=>{this.setState({newTime: e.target.value})}}/>
                         <br/>
                         <br/>
-                        <Button variant="contained" color="primary" onClick={(e) => { e.preventDefault(); this.newRequestType(counter.counterId);}}>Send</Button>
+                        <Button variant="contained" color="primary" onClick={(e) => { e.preventDefault(); this.newRequestType(counter.counterId, updateReq);}}>Send</Button>
                         </div>
 
                 </Modal>
