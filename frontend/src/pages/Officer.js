@@ -48,11 +48,11 @@ export class Officer extends Component {
                     <Dialog open={this.state.dialog} onClose={this.dialogClose}>
                         <DialogTitle id="dialog-title">
                             <p style={{fontSize: '35px', fontWeight: 'bold', textAlign: 'center'}}>Counter {this.state.selectValue}</p>
-                            {(this.state.ticketNumber!=='') && <><p style={{textAlign: 'center'}}>Next ticket number is: </p><p style={{fontWeight: 'bold', fontSize: '30px', textAlign: 'center'}}>{this.state.ticketNumber}</p>
+                            {(this.state.ticketNumber!=='' && this.state.ticketNumber!==0) && <><p style={{textAlign: 'center'}}>Next ticket number is: </p><p style={{fontWeight: 'bold', fontSize: '30px', textAlign: 'center'}}>{this.state.ticketNumber}</p>
                             <p style={{textAlign: 'center'}}>  for request type:</p>
                             <p style={{fontSize: '25px', fontWeight: 'bold', textAlign: 'center'}}>{this.state.requestType.toUpperCase()}</p></>}                        
                         </DialogTitle>
-                        <Button style={{padding: '20px'}} variant="contained" color="primary" onClick={this.handleNext}>Next </Button>
+                        <Button style={{padding: '20px'}}  variant="contained" color="primary" onClick={this.handleNext}>Next </Button>
                     </Dialog>
                 </div>      
             </div>
