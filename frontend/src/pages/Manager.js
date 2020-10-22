@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import wall from './wall.png';
 import { Button, Box, ButtonGroup } from '@material-ui/core';
 import axios from 'axios';
-
 import { ButtonCounter } from '../components/ButtonCounter'
 
 export class Manager extends Component {

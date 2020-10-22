@@ -5,6 +5,8 @@ import { Button, Box, ButtonGroup } from '@material-ui/core';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Dialog from '@material-ui/core/Dialog';
 import axios from 'axios';
+import userwall from './userwall.png';
+import Card from '@material-ui/core/Card';
 
 export class Officer extends Component {
 
@@ -35,34 +37,24 @@ export class Officer extends Component {
             {menu.push(<MenuItem value={i}>Counter {i}</MenuItem>)}
 
         return (
-            <div>
-                <h1>Officer</h1>
-                <p>Select counter:</p>
-                <Select
-                // open={open}
-                // onClose={handleClose}
-                // onOpen={handleOpen}
-                value={this.state.selectValue}
-                onChange={(e)=>{this.setState( {selectValue: e.target.value})}}
-                >
-                    {
-                        menu
-                    }
+            <div style={{ minHeight: '950px', backgroundImage: `url(${userwall})`}}>
+                <div style={{display: 'flex', flexDirection: 'column', backgroundColor: '#282c34', minHeight: '80px', justifyContent: 'center', alignContent: 'center'}}><h1 style={{color: '#fff'}}>Officer</h1></div>
+                <p style={{fontSize: '30px', fontWeight: 'bold', color: '#fff', paddingTop: '40px'}}>Select counter:</p>
+                <div style={{display: 'flex', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-evenly', alignContent: 'flex-start' }}>
+                    <Button style={{margin: '77px',  minWidth: '150px', maxWidth: '150px', padding: '50px', fontSize: '20px'}} variant="contained" color="primary" key={1} onClick={() => {this.setState( {selectValue: 1}); this.dialogOpen();}}>COUNTER 1</Button>
+                    <Button style={{margin: '77px',  minWidth: '150px', maxWidth: '150px', padding: '50px', fontSize: '20px'}} variant="contained" color="primary" key={2} onClick={() => {this.setState( {selectValue: 2}); this.dialogOpen();}}>COUNTER 2</Button>
+                    <Button style={{margin: '77px',  minWidth: '150px', maxWidth: '150px', padding: '50px', fontSize: '20px'}} variant="contained" color="primary" key={3} onClick={() => {this.setState( {selectValue: 3}); this.dialogOpen();}}>COUNTER 3</Button>
 
-
-                </Select>
-                <br/>
-                <br/>
-                <Button variant="contained" color="primary" onClick={this.dialogOpen}>Select </Button>
-                <Dialog open={this.state.dialog} onClose={this.dialogClose}>
-                    <DialogTitle id="dialog-title">
-                        <p style={{fontSize: '35px', fontWeight: 'bold', textAlign: 'center'}}>Counter {this.state.selectValue}</p>
-                        {(this.state.ticketNumber!=='') && <><p style={{textAlign: 'center'}}>Next ticket number is: </p><p style={{fontWeight: 'bold', fontSize: '30px', textAlign: 'center'}}>{this.state.ticketNumber}</p>
-                        <p style={{textAlign: 'center'}}>  for request type:</p>
-                        <p style={{fontSize: '25px', fontWeight: 'bold', textAlign: 'center'}}>{this.state.requestType.toUpperCase()}</p></>}                        
-                    </DialogTitle>
-                    <Button style={{padding: '20px'}} variant="contained" color="primary" onClick={this.handleNext}>Next </Button>
-                </Dialog>
+                    <Dialog open={this.state.dialog} onClose={this.dialogClose}>
+                        <DialogTitle id="dialog-title">
+                            <p style={{fontSize: '35px', fontWeight: 'bold', textAlign: 'center'}}>Counter {this.state.selectValue}</p>
+                            {(this.state.ticketNumber!=='') && <><p style={{textAlign: 'center'}}>Next ticket number is: </p><p style={{fontWeight: 'bold', fontSize: '30px', textAlign: 'center'}}>{this.state.ticketNumber}</p>
+                            <p style={{textAlign: 'center'}}>  for request type:</p>
+                            <p style={{fontSize: '25px', fontWeight: 'bold', textAlign: 'center'}}>{this.state.requestType.toUpperCase()}</p></>}                        
+                        </DialogTitle>
+                        <Button style={{padding: '20px'}} variant="contained" color="primary" onClick={this.handleNext}>Next </Button>
+                    </Dialog>
+                </div>      
             </div>
         )
     }
