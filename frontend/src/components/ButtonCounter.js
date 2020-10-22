@@ -74,7 +74,7 @@ export class ButtonCounter extends Component {
                     <div style={{width:'900px'}} className='modal'>
                         <div style={{display: 'flex', justifyContent: 'space-between'}}>
                             <div style={{ font: 'bold', textAlign: 'center', fontSize: '40px', marginBottom: '20px'}}>Counter {counter.counterId}</div>                        
-                            <div><Button variant="contained" color="light" onClick={(e) => { e.preventDefault();  this.setState({modal2: true}) }}>x</Button></div>
+                            <div><Button variant="contained" color="light" onClick={(e) => { e.preventDefault();  this.setState({ modal1: false }) }}>x</Button></div>
                         </div>
                         <div style={{display: 'flex', justifyContent: 'space-evenly'}}>
                             <div className='column'>
