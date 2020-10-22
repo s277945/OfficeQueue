@@ -62,7 +62,14 @@ export class ButtonCounter extends Component {
 
         return (
             <div>
-                <Button style={{margin: '20px'}} variant="contained" color="primary" onClick={this.handleOpen}>Counter {counter.counterId}</Button>
+                <Button style={{margin: '40px', minWidth: '150px', maxWidth: '150px'}} variant="contained" color="primary" onClick={this.handleOpen}>
+                <div>
+                <p style={{fontSize: '20px'}}>Counter {counter.counterId}</p>
+                    {counter.reqTypes.map((req)=>
+                    <p style={{fontSize: '13px'}}>{req}</p>
+                    )}</div>
+                                
+                </Button>
                 <Modal
                     open={this.state.modal1}
                     onClose={this.handleClose}>

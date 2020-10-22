@@ -49,7 +49,7 @@ export class Manager extends Component {
 
         return (
             <div>
-                <div ><h1>Counter Management</h1></div>                 
+                <div ><h1 style={{backgroundColor: '#282c34'}}>Counter Management</h1></div>                 
                 <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'center'}}>{counters !== undefined ? counters.map((counter) =>
                                     <ButtonCounter  counter={counter} requestTypes={requestTypes}></ButtonCounter>  
                         )
