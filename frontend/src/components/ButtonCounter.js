@@ -71,35 +71,37 @@ export class ButtonCounter extends Component {
                                 
                 </Button>
                 <Modal open={this.state.modal1} onClose={this.handleClose}>
-                    <div style={{align: 'center', position: 'absolute', top: '40vh', padding: '40px', left: '20vw', right: '20vw'}} className='modal'>
-                        <div style={{ font: 'bold', textAlign: 'center', fontSize: '35px', marginBottom: '20px'}}>Counter {counter.counterId}</div>
-                        <div>
+                    <div style={{width:'900px'}} className='modal'>
+                        <div style={{display: 'flex', justifyContent: 'space-between'}}>
+                            <div style={{ font: 'bold', textAlign: 'center', fontSize: '40px', marginBottom: '20px'}}>Counter {counter.counterId}</div>                        
+                            <div><Button variant="contained" color="light" onClick={(e) => { e.preventDefault();  this.setState({modal2: true}) }}>x</Button></div>
+                        </div>
+                        <div style={{display: 'flex', justifyContent: 'space-evenly'}}>
                             <div className='column'>
-                                <div>Add request types:</div>
+                                <div style={{marginBottom: '10px', fontSize: '25px', marginBottom: '20px'}}>Add request types:</div>
                                 {requestTypes !== undefined ?
                                     requestTypes.filter(request=>{return !counter.reqTypes.includes(request)}).map((request) =>
-                                        <div>
-                                            <div>{request}</div>
-                                            <Button variant="contained" color="primary" onClick={(e) => { e.preventDefault(); this.addToCounter(counter.counterId, request) }}>Add</Button>
+                                        <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', maxWidth: '350px',  marginBottom: '5px'}}>
+                                            <div>{request.toUpperCase()}</div>
+                                            <div><Button variant="contained" color="primary" onClick={(e) => { e.preventDefault(); this.addToCounter(counter.counterId, request) }}>Add</Button></div>
                                         </div>)
                                     : <p>No requests available</p>}
                             </div>
                             <div className='column'>
-                                <div>Remove request types:</div>
+                                <div style={{marginBottom: '10px', fontSize: '25px', marginBottom: '20px'}}>Remove request types:</div>
                                 {counter.reqTypes != undefined ?
                                     counter.reqTypes.map((request) =>
-                                        <div>
-                                            <div>{request}</div>
+                                        <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', maxWidth: '350px',  marginBottom: '5px'}}>
+                                            <div>{request.toUpperCase()}</div>
                                             <Button variant="contained" color="secondary" onClick={(e) => { e.preventDefault(); this.deleteFromCounter(counter.counterId, request) }}>Delete</Button>
                                         </div>)
                                     : <p>No assigned requests</p>}
                             </div>
-
                         </div>
-                        <div>
-                        </div>
-                        <br />
-                        <Button variant="contained" color="primary" onClick={(e) => { e.preventDefault();  this.setState({modal2: true}) }}>New request type?</Button>
+                        <div style={{display: 'flex', justifyContent: 'flex-end'}}>
+                            <br />
+                            <Button variant="contained" color="primary" onClick={(e) => { e.preventDefault();  this.setState({modal2: true}) }}>+</Button>
+                        </div>                        
                     </div>
                 </Modal>
                 <Modal open={this.state.modal2} onClose={()=>{this.setState({modal2: false})}}>
