@@ -159,6 +159,11 @@ GET /api/counters/:counterId/nextId
     - response body: ticketId
 */
 
+app.get('/api/counters/:counterId/nextId', (req, res) => {     //read current id for selected counter id from database     
+    dao.searchByCounterID(req.params.counterId)     
+    .then((result) => {res.status(200).json(result)}) // all went smoothly     
+    .catch((err) => {res.status(403).json({ errors: [{ 'param': 'Server', 'msg': err }] })})// error response
+});
 
 /*
 GET /api/counters/currentId
