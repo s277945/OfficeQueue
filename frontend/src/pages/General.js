@@ -29,21 +29,21 @@ export class General extends Component {
             <div>
             <TableContainer component={Paper}>
                 <Table aria-label="simple table">
-                    <TableHead style={{backgroundColor: '#282c34'}}>
+                    <TableHead style={{backgroundColor: '#3F51B5'}}>
                     <TableRow>
-                        <TableCell style={{color: '#fff'}} align="right">Counter</TableCell>
-                        <TableCell style={{color: '#fff'}} align="right">RequestTypes</TableCell>
-                        <TableCell style={{color: '#fff'}} align="right">TicketNumber</TableCell>
+                        <TableCell style={{color: '#fff',fontSize:30}} align="left">Counter</TableCell>
+                        <TableCell style={{color: '#fff',fontSize:30}} align="left">RequestTypes</TableCell>
+                        <TableCell style={{color: '#fff',fontSize:30}} align="left">TicketNumber</TableCell>
                     </TableRow>
                     </TableHead>
                     <TableBody>
-                    {this.state.data.map(elem => 
-                        <TableRow key={elem[0].counterId}>
-                        <TableCell align="right" component="th" scope="row">
+                    {this.state.data.map(elem =>
+                        <TableRow key={elem[0].counterId} style={{height: 120}}>
+                        <TableCell align="left" component="th" scope="row" style={{fontSize:30}}>
                             {elem[0].counterId}
                         </TableCell>
-                        <TableCell align="right">{elem[0].requestType}</TableCell>
-                        <TableCell align="right">{elem[0].ticketId}</TableCell>
+                        <TableCell align="left" style={{fontSize:30}}>{elem[0].requestType}</TableCell>
+                        <TableCell align="left" style={{fontSize:30}}>{elem[0].ticketId}</TableCell>
                         </TableRow>
                     )}
                     </TableBody>
