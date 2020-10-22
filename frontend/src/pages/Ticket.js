@@ -46,8 +46,11 @@ export class Ticket extends Component {
 
     renderTicket(){
         return (
-            <Box display="flex" mx={5} justifyContent="center" >
-                <p>Your ticket is number : {this.state.ticketId}  for {this.state.currentRequestType}</p>
+            <Box>
+                <Box display="flex" mx={5} justifyContent="center" >
+                    <p>Your ticket is number : {this.state.ticketId}  for {this.state.currentRequestType}</p>
+                </Box>
+                <Button color="primary" variant="contained" size="large" onClick={() => this.setState({ticketId : null})}>Return</Button>
             </Box>
         )
     }
