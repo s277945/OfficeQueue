@@ -54,7 +54,6 @@ export class ButtonCounter extends Component {
                 console.log(res)
                 //window.location.reload(false);
             })
-            this.setState({ modal1: false });
             this.setState({ modal2: false });
             funct(this.state.newText);
     }
