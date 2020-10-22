@@ -10,6 +10,12 @@ export class Officer extends Component {
 
     handleNext=()=>{
         console.log(this.state.selectValue)
+
+        axios.get(`http://localhost:3001/api/counters/${this.state.selectValue}/next`)
+        .then(res => {
+            console.log(res.data)
+            this.setState({request_types: res.data})
+        })
     }
 
     render() {
