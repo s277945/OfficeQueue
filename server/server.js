@@ -6,6 +6,7 @@
 const express = require('express');
 const dao = require('./dao');
 const morgan = require('morgan'); // logging middleware
+const cors = require('cors');
 const { check, validationResult } = require('express-validator');
 const moment = require('moment');
 
@@ -19,6 +20,9 @@ app.use(morgan('tiny'));
 
 // Process body content
 app.use(express.json());
+
+// Enable cors
+app.use(cors());
 
 ///////////////////////
 ///REST API ENDPOINT///
