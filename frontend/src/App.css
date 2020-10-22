@@ -51,8 +51,8 @@
 
 .modal {
   position: absolute;
-  top: 50%;
-  left: 50%;
+  top: 20%;
+  left: 43%;
   border: '2px solid #000';
   padding: 20px;
   background: white;
