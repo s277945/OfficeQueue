@@ -10,7 +10,7 @@ export class Ticket extends Component {
     }
 
     componentDidMount(){
-        axios.get(`http://localhost:3001/api/requestTypes`)
+        axios.get(`http://localhost:3001/api/counters/requestTypes`)
         .then(res => {
           this.setState({request_types: res.data})
         })

@@ -43,6 +43,10 @@ export class Officer extends Component {
                 <br/>
                 <br/>
                 <Button variant="contained" color="primary" onClick={this.handleNext}>Next </Button>
+
+                {this.state.request_types && 
+                    <p>{JSON.stringify(this.state.request_types)}</p>
+                }
             </div>
         )
     }

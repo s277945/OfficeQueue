@@ -12,7 +12,7 @@ export class Manager extends Component {
     async componentDidMount() {
         //Get request Types
         var reqList = []
-        axios.get(`http://localhost:3001/api/counters/requestTypes`)
+        axios.get(`http://localhost:3001/api/requestTypes`)
             .then(res => {
                 res.data.map((obj) => reqList.push(obj.RequestType))
                 console.log(reqList)
