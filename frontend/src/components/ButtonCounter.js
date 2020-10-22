@@ -62,7 +62,7 @@ export class ButtonCounter extends Component {
 
         return (
             <div>
-                <Button variant="contained" color="primary" onClick={this.handleOpen}>Counter {counter.counterId}</Button>
+                <Button style={{margin: '20px'}} variant="contained" color="primary" onClick={this.handleOpen}>Counter {counter.counterId}</Button>
                 <Modal
                     open={this.state.modal1}
                     onClose={this.handleClose}>

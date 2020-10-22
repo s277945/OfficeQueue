@@ -48,22 +48,12 @@ export class Manager extends Component {
         const { counters, requestTypes, assignedReq } = this.state
 
         return (
-            <div >
-                <h1>Counter Management</h1>
-                <Box >
-                    <ButtonGroup orientation='vertical' size="large" variant="contained" color="primary" aria-label="large outlined primary button group">
-                        {counters !== undefined ? counters.map((counter) =>
-                            <div>
-                                <ButtonCounter counter={counter} requestTypes={requestTypes}></ButtonCounter>
-                                <p>Available requests:</p>
-                                {counter.reqTypes.map((req)=>
-                                    <p>{req}</p>
-                                )}
-                            </div>
+            <div>
+                <div ><h1>Counter Management</h1></div>                 
+                <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'center'}}>{counters !== undefined ? counters.map((counter) =>
+                                    <ButtonCounter  counter={counter} requestTypes={requestTypes}></ButtonCounter>  
                         )
-                            : <p> Add new counters</p>}
-                    </ButtonGroup>
-                </Box>
+                            : <p> Add new counters</p>} </div>                                                                 
             </div>
         )
     }
