@@ -32,8 +32,8 @@ export class General extends Component {
                     <TableHead style={{backgroundColor: '#3F51B5'}}>
                     <TableRow>
                         <TableCell style={{color: '#fff',fontSize:30}} align="left">Counter</TableCell>
-                        <TableCell style={{color: '#fff',fontSize:30}} align="left">RequestTypes</TableCell>
-                        <TableCell style={{color: '#fff',fontSize:30}} align="left">TicketNumber</TableCell>
+                        <TableCell style={{color: '#fff',fontSize:30}} align="center">RequestTypes</TableCell>
+                        <TableCell style={{color: '#fff',fontSize:30}} align="right">TicketNumber</TableCell>
                     </TableRow>
                     </TableHead>
                     <TableBody>
@@ -42,8 +42,8 @@ export class General extends Component {
                         <TableCell align="left" component="th" scope="row" style={{fontSize:30}}>
                             {elem[0].counterId}
                         </TableCell>
-                        <TableCell align="left" style={{fontSize:30}}>{elem[0].requestType}</TableCell>
-                        <TableCell align="left" style={{fontSize:30}}>{elem[0].ticketId}</TableCell>
+                        <TableCell align="center" style={{fontSize:30}}>{elem[0].requestType}</TableCell>
+                        <TableCell align="right" style={{fontSize:30}}>{elem[0].ticketId}</TableCell>
                         </TableRow>
                     )}
                     </TableBody>
