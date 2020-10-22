@@ -93,6 +93,18 @@ app.get('/api/counters/requestTypes', (req, res)=>{
 });
 
 /**
+ * GET /api/counters/:counterId/queueNumber
+ * 
+ * retrieves number of tickets in queue for counter
+ */
+
+app.get('/api/counters/:counterId/queueNumber', (req, res)=>{
+    dao.getRequestType(req.params.counterId)
+        .then(rows=> {dao.sumQueue(rows).then(sum => {console.log(sum); res.status(201).json(sum)}); console.log(rows);})
+        .catch(err => res.status(500).json({ errors: [{ 'param': 'Server', 'msg': err }] }));
+});
+
+/**
  * GET /api/counters/:counterId/requestTypes
  * 
  * retrieves list of served requestType by a counter
@@ -190,7 +202,7 @@ GET /api/counters/:counterId/currentId
 */
 app.get('/api/counters/:counterId/currentId', (req, res) => {
     //read current id for selected counter id from database
-    dao.showServedById(req.params.counterId)//??
+    dao.showServedById(req.params.counterId)
     .then((result) => {res.status(200).json(result)}) // all went smoothly
     .catch((err) => {res.status(403)})// error response
 })

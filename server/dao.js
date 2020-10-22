@@ -41,7 +41,6 @@ exports.addTicket = function(requestType){
                         reject(err);
                     }
                     else {
-                        console.log('Row inserted');
                         resolve(max+1);
                     }
                 });
@@ -82,6 +81,22 @@ exports.addTicket = function(requestType){
                 else {
                     let list = rows.map(row => [{"counterId": row.CounterID, "requestType": row.RequestType, "ticketId": row.TicketNumber}]);
                     resolve(list);
+                }
+            })
+        });
+
+    }
+
+    exports.showServedById=function (counterId) {
+        let map=new Map()
+        return new Promise ((resolve, reject) => {
+            const sql = 'SELECT  RequestType, TicketNumber FROM ServedTicket WHERE CounterId=?';
+            db.get(sql, [counterId], (err, row) => {
+                if (err)
+                    reject(err);
+                else {
+                    let res = {"requestType": row.RequestType, "ticketId": row.TicketNumber};
+                    resolve(res);
                 }
             })
         });
@@ -142,7 +157,6 @@ exports.addTicket = function(requestType){
                     reject(err);
                 }
                 else {
-                    console.log('Row inserted');
                     resolve(true);
                 }
             });
@@ -155,11 +169,9 @@ exports.addTicket = function(requestType){
             const sql='DELETE FROM CounterRequest WHERE counterID=? AND requestType=? ';
             db.run(sql, [counterID,requestType], function(err){
                 if(err){
-                    console.log('error on delete');
                     reject(err);
                 }
                 else {
-                    console.log('Row deleted');
                     resolve(true);
                 }
             });
@@ -174,7 +186,6 @@ exports.addTicket = function(requestType){
                     reject(err);
                 }
                 else {
-                    console.log('ReqType created');
                     resolve(true);
                 }
             });
@@ -191,7 +202,6 @@ exports.addTicket = function(requestType){
                 if (err)
                     reject(err);
                 else {
-                    console.log(rows);
                     for (let row of rows) {
                         await countQueue(row.RequestType).then((lenght) => {
                             if (lenght > 0) {
@@ -270,6 +280,29 @@ exports.addTicket = function(requestType){
     }
 
 
+    exports.sumQueue = function (requestTypes){
+    
+        return new Promise((resolve, reject) => {
+            let sum=0;
+            let i=0;
+            let c=requestTypes.length;
+            for (let reqType of requestTypes) {
+                const sql='SELECT COUNT(*) FROM Queue WHERE requestType=?';
+                db.get(sql, [reqType.RequestType], (err, row)=>{
+                    if(err)  reject(err);
+                    else {
+                        sum+=row['COUNT(*)'];
+                        i++;
+                        if(i===c)  {
+                            resolve(sum);
+                        }                        
+                    }                    
+                })
+            }
+            
+        })
+    }
+
 function countQueue(requestType){
     
         return new Promise((resolve, reject) => {
@@ -279,7 +312,6 @@ function countQueue(requestType){
                 if(err)
                     reject(err);
                 else {
-                    console.log(row['COUNT(*)']);
                     resolve(row['COUNT(*)']);
                 }
                     
@@ -288,15 +320,14 @@ function countQueue(requestType){
 
     }
 
+
 function selectMinTicket(requestType){
-    console.log("reqtype selectmin:" + requestType);
         return new Promise((resolve, reject) => {
             const sql='SELECT MIN(QueueNumber) AS minTicket FROM Queue WHERE RequestType=? ';
             db.get(sql,[requestType], (err,row)=>{
                 if(err)
                     reject(err);
                 else{
-                    console.log("minticket: " + row.minTicket);
                     resolve(row.minTicket)
                 }
             })

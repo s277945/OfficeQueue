@@ -46,6 +46,7 @@ export class ButtonCounter extends Component {
             })
         window.location.reload(false);
     }
+    
     newRequestType = (counter, funct) => {
         console.log(counter)
         console.log(this.state.newText,this.state.newTime)
@@ -54,6 +55,7 @@ export class ButtonCounter extends Component {
                 console.log(res)
                 //window.location.reload(false);
             })
+            this.setState({ modal1: false });
             this.setState({ modal2: false });
             funct(this.state.newText);
     }
