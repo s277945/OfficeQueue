@@ -3,6 +3,7 @@ import { Button, Box, ButtonGroup } from '@material-ui/core';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Dialog from '@material-ui/core/Dialog';
 import axios from 'axios';
+import userwall from './userwall.png';
 
 export class Ticket extends Component {
     state = {
@@ -34,7 +35,7 @@ export class Ticket extends Component {
         }
     renderRequestList(){
         return (
-            <div style={{ minHeight: '950px' }}>
+            <div style={{ minHeight: '950px', backgroundImage: `url(${userwall})`}}>
                 <Dialog open={this.state.modal1} onClose={() => { this.setState({ modal1: false }) }}>
                     <DialogTitle id="dialog-title"><p style={{textAlign: 'center'}}>Your ticket number is: </p><p style={{fontWeight: 'bold', fontSize: '30px', textAlign: 'center'}}>{this.state.ticketId}</p><p style={{textAlign: 'center'}}>  for {this.state.currentRequestType}</p></DialogTitle>
                 </Dialog>
