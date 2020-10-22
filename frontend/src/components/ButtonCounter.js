@@ -70,16 +70,14 @@ export class ButtonCounter extends Component {
                     )}</div>
                                 
                 </Button>
-                <Modal
-                    open={this.state.modal1}
-                    onClose={this.handleClose}>
-                    <div className='modal'>
-                        <div style={{ font: 'bold', textAlign: 'center' }}>Counter {counter.counterId}</div>
+                <Modal open={this.state.modal1} onClose={this.handleClose}>
+                    <div style={{align: 'center', position: 'absolute', top: '40vh', padding: '40px', left: '20vw', right: '20vw'}} className='modal'>
+                        <div style={{ font: 'bold', textAlign: 'center', fontSize: '35px', marginBottom: '20px'}}>Counter {counter.counterId}</div>
                         <div>
                             <div className='column'>
                                 <div>Add request types:</div>
                                 {requestTypes !== undefined ?
-                                    requestTypes.map((request) =>
+                                    requestTypes.filter(request=>{return !counter.reqTypes.includes(request)}).map((request) =>
                                         <div>
                                             <div>{request}</div>
                                             <Button variant="contained" color="primary" onClick={(e) => { e.preventDefault(); this.addToCounter(counter.counterId, request) }}>Add</Button>
@@ -104,9 +102,7 @@ export class ButtonCounter extends Component {
                         <Button variant="contained" color="primary" onClick={(e) => { e.preventDefault();  this.setState({modal2: true}) }}>New request type?</Button>
                     </div>
                 </Modal>
-                <Modal 
-                    open={this.state.modal2}
-                    onClose={()=>{this.setState({modal2: false})}}>
+                <Modal open={this.state.modal2} onClose={()=>{this.setState({modal2: false})}}>
                         <div className='modal'><p>Request type:</p>
                         <input type="text" value={this.state.newText} onChange={(e)=>{this.setState({newText: e.target.value})}}/>
                         <p>Request time:</p>
