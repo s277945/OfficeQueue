@@ -43,6 +43,12 @@
   left: 50%;
 }
 
+.manager-buttons {
+  position: absolute;
+  top: 10%;
+  left: 50%;
+}
+
 .modal {
   position: absolute;
   top: 50%;
