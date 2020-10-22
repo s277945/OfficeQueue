@@ -1,12 +1,15 @@
 import React, { Component } from 'react'
 import { Button, Box, ButtonGroup } from '@material-ui/core';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import Dialog from '@material-ui/core/Dialog';
 import axios from 'axios';
 
 export class Ticket extends Component {
     state = {
         request_types: [],
         ticketId: null,
-        currentRequestType: null
+        currentRequestType: null,
+        modal1: false
     }
 
     componentDidMount(){
@@ -23,18 +26,18 @@ export class Ticket extends Component {
           this.setState({ticketId: res.data.ticketId})
           console.log(res.data)
         })
+        this.setState({ modal1: true })
     }
 
     render() {
-        if(!this.state.ticketId){
             return this.renderRequestList()
         }
-        else return this.renderTicket();
-    }
-
     renderRequestList(){
         return (
             <div style={{ minHeight: '950px' }}>
+                <Dialog open={this.state.modal1} onClose={() => { this.setState({ modal1: false }) }}>
+                    <DialogTitle id="dialog-title"><p style={{textAlign: 'center'}}>Your ticket number is: </p><p style={{fontWeight: 'bold', fontSize: '30px', textAlign: 'center'}}>{this.state.ticketId}</p><p style={{textAlign: 'center'}}>  for {this.state.currentRequestType}</p></DialogTitle>
+                </Dialog>
                 <div style={{ display: 'flex', flexGrow: '1', backgroundColor: '#282c34', minHeight: '80px', justifyContent: 'center', alignContent: 'center' }}><h1 style={{ color: '#fff' }}>Select a service</h1></div>
                 <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
                     {this.state.request_types.map(request_type =>
@@ -44,11 +47,4 @@ export class Ticket extends Component {
         )
     }
 
-    renderTicket(){
-        return (
-            <Box display="flex" mx={5} justifyContent="center" >
-                <p>Your ticket is number : {this.state.ticketId}  for {this.state.currentRequestType}</p>
-            </Box>
-        )
-    }
 }
