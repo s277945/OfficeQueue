@@ -17,12 +17,12 @@ export class ButtonCounter extends Component {
         this.setState({ modal1: false });
     };
 
-    addToCounter = (counter, request) => {
+    addToCounter = (counter, request, aReq) => {
         console.log(counter, request)
         axios.post(`http://localhost:3001/api/counters/${counter}`, { requestType: request })
             .then(res => {
                 console.log(res)
-                window.location.reload(false);
+                aReq(counter, request);
             })
 
     }
@@ -53,15 +53,14 @@ export class ButtonCounter extends Component {
             .then(res => {
                 console.log(res)
                 //window.location.reload(false);
+                this.setState({ modal2: false });
+                funct(this.state.newText);
             })
-            this.setState({ modal1: false });
-            this.setState({ modal2: false });
-            funct(this.state.newText);
     }
 
     render() {
 
-        const {  deleteReq, updateReq, counter, requestTypes } = this.props
+        const {  addReq, deleteReq, updateReq, counter, requestTypes } = this.props
 
         return (
             <div>
@@ -86,7 +85,7 @@ export class ButtonCounter extends Component {
                                     requestTypes.filter(request=>{return !counter.reqTypes.includes(request)}).map((request) =>
                                         <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', maxWidth: '350px',  marginBottom: '5px'}}>
                                             <div>{request.toUpperCase()}</div>
-                                            <div><Button variant="contained" color="primary" onClick={(e) => { e.preventDefault(); this.addToCounter(counter.counterId, request) }}>Add</Button></div>
+                                            <div><Button variant="contained" color="primary" onClick={(e) => { e.preventDefault(); this.addToCounter(counter.counterId, request, addReq) }}>Add</Button></div>
                                         </div>)
                                     : <p>No requests available</p>}
                             </div>
