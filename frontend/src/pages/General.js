@@ -32,8 +32,8 @@ export class General extends Component {
                     <TableHead style={{backgroundColor: '#3F51B5'}}>
                     <TableRow>
                         <TableCell style={{color: '#fff',fontSize:30}} align="left">Counter</TableCell>
-                        <TableCell style={{color: '#fff',fontSize:30}} align="center">RequestTypes</TableCell>
-                        <TableCell style={{color: '#fff',fontSize:30}} align="right">TicketNumber</TableCell>
+                        <TableCell style={{color: '#fff',fontSize:30}} align="center">Request Type</TableCell>
+                        <TableCell style={{color: '#fff',fontSize:30}} align="right">Ticket Number</TableCell>
                     </TableRow>
                     </TableHead>
                     <TableBody>
