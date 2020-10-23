@@ -42,8 +42,8 @@ export class General extends Component {
                         <TableCell align="left" component="th" scope="row" style={{fontSize:30}}>
                             {elem[0].counterId}
                         </TableCell>
-                        {(elem[0].ticketId!==0 && elem[0].ticketId!=='') ? <><TableCell align="center" style={{fontSize:30}}>{elem[0].requestType}</TableCell></> : <><TableCell align="center" style={{fontSize:30}}>-</TableCell></>}
-                        {(elem[0].ticketId!==0 && elem[0].ticketId!=='') ? <><TableCell align="right" style={{fontSize:30}}>{elem[0].ticketId}</TableCell></> : <><TableCell align="right" style={{fontSize:30}}>-</TableCell></>}
+                        {(elem[0].ticketId!==0 && elem[0].ticketId!=='') ? <><TableCell align="center" style={{fontSize:30}}>{elem[0].requestType.toUpperCase()}</TableCell></> : <><TableCell align="center" style={{fontSize:30}}>-</TableCell></>}
+                        {(elem[0].ticketId!==0 && elem[0].ticketId!=='') ? <><TableCell align="right" style={{fontSize:30}}>{elem[0].ticketId}{elem[0].requestType.charAt(0).toUpperCase()}</TableCell></> : <><TableCell align="right" style={{fontSize:30}}>-</TableCell></>}
                         </TableRow>
                     )}
                     </TableBody>
