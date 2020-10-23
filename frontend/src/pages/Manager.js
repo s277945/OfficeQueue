@@ -48,6 +48,16 @@ export class Manager extends Component {
         this.setState({ requestTypes: newreq });
     }
 
+    deleteReq = (counter, requestType) => {
+        let newcounters = this.state.counters;
+        console.log(newcounters);
+        let newcounter = newcounters[counter-1];
+        newcounter.reqTypes = newcounter.reqTypes.filter(req=>{return req!==requestType});
+        console.log(newcounter);
+        newcounters[counter-1] = newcounter;
+        this.setState({ counters: newcounters });
+    }
+
     render() {
 
         const { counters, requestTypes, assignedReq } = this.state
@@ -56,8 +66,7 @@ export class Manager extends Component {
             <div style={{minHeight: '950px', backgroundImage: `url(${wall})`}}>
                 <div style={{display: 'flex', flexGrow: '1', backgroundColor: '#282c34', minHeight: '80px', justifyContent: 'center', alignContent: 'center'}}><h1 style={{color: '#fff'}}>Counter Management</h1></div>                 
                 <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', height: '80vh'}}>{counters !== undefined ? counters.map((counter) =>
-                                    <ButtonCounter updateReq={this.updateReq}  counter={counter} requestTypes={requestTypes}></ButtonCounter>  
-                        )
+                                    <ButtonCounter  deleteReq={this.deleteReq} updateReq={this.updateReq}  counter={counter} requestTypes={requestTypes}></ButtonCounter>  )
                             : <p> Add new counters</p>} </div>                                                                 
             </div>
         )

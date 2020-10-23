@@ -27,7 +27,7 @@ export class ButtonCounter extends Component {
 
     }
 
-    deleteFromCounter = (counter, request) => {
+    deleteFromCounter = (counter, request, dReq) => {
         //Axios didn't work so using fetch
         // console.log(counter, request)
         // axios.delete(`http://localhost:3001/api/counters/${counter}`, { data: {requestType : request}})
@@ -42,9 +42,8 @@ export class ButtonCounter extends Component {
             body: JSON.stringify({ requestType: request })
         })
             .then(res => {
-                //this is not happening
+                dReq(counter, request);
             })
-        window.location.reload(false);
     }
     
     newRequestType = (counter, funct) => {
@@ -62,7 +61,7 @@ export class ButtonCounter extends Component {
 
     render() {
 
-        const { updateReq, counter, requestTypes } = this.props
+        const {  deleteReq, updateReq, counter, requestTypes } = this.props
 
         return (
             <div>
@@ -97,7 +96,7 @@ export class ButtonCounter extends Component {
                                     counter.reqTypes.map((request) =>
                                         <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', maxWidth: '350px',  marginBottom: '5px'}}>
                                             <div>{request.toUpperCase()}</div>
-                                            <Button variant="contained" color="secondary" onClick={(e) => { e.preventDefault(); this.deleteFromCounter(counter.counterId, request) }}>Delete</Button>
+                                            <Button variant="contained" color="secondary" onClick={(e) => { e.preventDefault(); this.deleteFromCounter(counter.counterId, request,  deleteReq) }}>Delete</Button>
                                         </div>)
                                     : <p>No assigned requests</p>}
                             </div>
