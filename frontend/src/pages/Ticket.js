@@ -8,8 +8,8 @@ import userwall from './userwall.png';
 export class Ticket extends Component {
     state = {
         request_types: [],
-        ticketId: null,
-        currentRequestType: null,
+        ticketId: 0,
+        currentRequestType: '',
         modal1: false
     }
 
@@ -37,7 +37,7 @@ export class Ticket extends Component {
         return (
             <div style={{ minHeight: '950px', backgroundImage: `url(${userwall})`}}>
                 <Dialog open={this.state.modal1} onClose={() => { this.setState({ modal1: false }) }}>
-                    <DialogTitle id="dialog-title"><p style={{textAlign: 'center'}}>Your ticket number is: </p><p style={{fontWeight: 'bold', fontSize: '30px', textAlign: 'center'}}>{this.state.ticketId}</p><p style={{textAlign: 'center'}}>  for {this.state.currentRequestType}</p></DialogTitle>
+                    <DialogTitle id="dialog-title"><p style={{textAlign: 'center'}}>Your ticket number is: </p><p style={{fontWeight: 'bold', fontSize: '30px', textAlign: 'center'}}>{this.state.ticketId}{this.state.currentRequestType.charAt(0).toUpperCase()}</p><p style={{textAlign: 'center'}}>  for {this.state.currentRequestType}</p></DialogTitle>
                 </Dialog>
                 <div style={{ display: 'flex', flexGrow: '1', backgroundColor: '#282c34', minHeight: '80px', justifyContent: 'center', alignContent: 'center' }}><h1 style={{ color: '#fff' }}>Select a service</h1></div>
                 <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>

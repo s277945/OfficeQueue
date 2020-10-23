@@ -66,7 +66,7 @@ export class Officer extends Component {
                     <Dialog open={this.state.dialog} onClose={this.dialogClose}>
                         <DialogTitle id="dialog-title">
                             <p style={{fontSize: '35px', fontWeight: 'bold', textAlign: 'center'}}>Counter {this.state.selectValue}</p>
-                            {(this.state.ticketNumber!=='' && this.state.ticketNumber!==0) && <><p style={{textAlign: 'center'}}>Current ticket number is: </p><p style={{fontWeight: 'bold', fontSize: '30px', textAlign: 'center'}}>{this.state.ticketNumber}</p>
+        {(this.state.ticketNumber!=='' && this.state.ticketNumber!==0) && <><p style={{textAlign: 'center'}}>Current ticket number is: </p><p style={{fontWeight: 'bold', fontSize: '30px', textAlign: 'center'}}>{this.state.ticketNumber}{this.state.requestType.charAt(0).toUpperCase()}</p>
                             <p style={{textAlign: 'center'}}>  for request type:</p>
                             <p style={{fontSize: '25px', fontWeight: 'bold', textAlign: 'center'}}>{this.state.requestType.toUpperCase()}</p></>}
                             <p style={{fontSize: '35px', fontWeight: 'bold', textAlign: 'center'}}>Remaining customers in queue: {this.state.queueNumber}</p>                   
